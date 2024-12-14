@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CelestialAI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+    
+    <!-- Back to Chat Link -->
+    <a href="/" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Chat
+    </a>
+
+    <div class="container">
+        <div class="auth-card">
+            <!-- Logo Section -->
+            <div class="logo">
+                <i class="fas fa-robot logo-icon pulse"></i>
+                <h1>CelestialAI</h1>
+                <p class="subtitle">Your AI Assistant</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" novalidate>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-envelope"></i> Email
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="email" class="form-input" id="loginEmail" 
+                               placeholder="Enter your email" required>
+                        <span class="input-focus"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <div class="password-input-wrapper">
+                        <input type="password" class="form-input" id="loginPassword" 
+                               placeholder="Enter your password" required>
+                        <button type="button" class="toggle-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <span class="input-focus"></span>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Login</span>
+                    <div class="btn-loader"></div>
+                </button>
+                <div class="error-message" id="loginError"></div>
+                <div class="success-message" id="loginSuccess"></div>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider">
+                <span>or</span>
+            </div>
+
+            <!-- Social Login -->
+            <div class="social-login">
+                <button type="button" class="btn btn-google">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+                         alt="Google logo" class="google-icon">
+                    Continue with Google
+                    <div class="btn-loader"></div>
+                </button>
+            </div>
+
+            <!-- Sign Up Button -->
+            <button type="button" class="btn btn-outline signup-btn">
+                <i class="fas fa-user-plus"></i> Sign Up
+            </button>
+
+            <!-- Signup Form -->
+            <form id="signupForm" style="display: none;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i> First Name
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="text" class="form-input" id="firstName" 
+                                   placeholder="First name" required>
+                            <span class="input-focus"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i> Last Name
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="text" class="form-input" id="lastName" 
+                                   placeholder="Last name" required>
+                            <span class="input-focus"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-envelope"></i> Email
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="email" class="form-input" id="signupEmail" 
+                               placeholder="Enter your email" required>
+                        <span class="input-focus"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-user-tag"></i> Username
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="text" class="form-input" id="username" 
+                               placeholder="Choose a username" required
+                               pattern="^[a-zA-Z0-9_]{3,20}$">
+                        <span class="input-focus"></span>
+                    </div>
+                    <div class="requirements">
+                        3-20 characters, letters, numbers and underscores only
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <div class="password-input-wrapper">
+                        <input type="password" class="form-input" id="signupPassword" 
+                               placeholder="Create password" required>
+                        <button type="button" class="toggle-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <span class="input-focus"></span>
+                    </div>
+                    <div class="password-strength" id="passwordStrength"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-lock"></i> Confirm Password
+                    </label>
+                    <div class="password-input-wrapper">
+                        <input type="password" class="form-input" id="confirmPassword" 
+                               placeholder="Confirm password" required>
+                        <button type="button" class="toggle-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <span class="input-focus"></span>
+                    </div>
+                </div>
+                <div class="terms-checkbox">
+                    <label>
+                        <input type="checkbox" required>
+                        <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary signup-submit">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Sign Up</span>
+                    <div class="btn-loader"></div>
+                </button>
+                <div class="error-message" id="signupError"></div>
+                <div class="success-message" id="signupSuccess"></div>
+            </form>
+
+            <!-- Back to Login Button -->
+            <button type="button" class="btn btn-outline back-to-login" style="display: none;">
+                <i class="fas fa-arrow-left"></i> Back to Login
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase Initialization -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "{{ firebase_config.apiKey }}",
+            authDomain: "{{ firebase_config.authDomain }}",
+            projectId: "{{ firebase_config.projectId }}",
+            storageBucket: "{{ firebase_config.storageBucket }}",
+            messagingSenderId: "{{ firebase_config.messagingSenderId }}",
+            appId: "{{ firebase_config.appId }}"
+        };
+        
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+    </script>
+    
+    <!-- Auth Script -->
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body>
+</html>
